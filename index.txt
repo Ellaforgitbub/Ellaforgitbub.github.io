@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meat charset = "utf-8">
+        <meta name="author" content="Ella">
+        <meta name="keyword" content="note">
+        <meta name="description" content="note114018">
+        <title>The note</title>
+    </head>
+    <body>
+        <ul style="list-style: none;">
+            <li>
+                <h2><a href = "https://hackmd.io/@Ccj-07/BJCiF_0kgl" target = "_blank"><em>第二周自學筆記</em></a></h2>
+                <ol type="1">
+                    <li>
+                        <details open>
+                            <summary>我學過的標籤</summary>
+                            <ul style="list-style: square;">
+                                <li>
+                                    <details>
+                                        <summary>隱藏訊息標籤</summary>
+                                        <ul style="list-style: none;">
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;title&#62;</summary>
+                                                    <p>語意標籤，表示網頁的標題，通常在標籤&#60;head&#62;中</p>
+                                                </details>
+                                            </li>
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;meat&#62;</summary>
+                                                    <p>將這份網頁的資訊，提供給瀏覽器、社群網站或搜尋引擎，
+                                                        <br>可提供的資訊包含了頁面編碼、作者資訊、關鍵字、頁面描述、網站縮圖、頁面發布時間…等。</p>
+                                                </details> 
+                                            </li>
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;head&#62;</summary>
+                                                    <p>這個標籤內可以儲存只想給瀏覽器的資訊，不會顯示在網頁內，但是如果有文字或者其他有顯示功能的仍會被<br>
+                                                    顯示於網頁內。</p>
+                                                </details> 
+                                            </li>
+                                        </ul>
+                                    </details>
+
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary>效果標籤</summary>
+                                        <ul style="list-style: none;">
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;strong&#62;</summary>
+                                                    <p>表示這個字的重要性，屬於語言標籤之一，對SEO很有幫助</p>
+                                                </details>
+                                            </li>
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;em&#62;</summary>
+                                                    <p>語意標籤，與&#60;i&#62;效果相同，只是<b>更加強調這個被標記元素的重要性</b>
+                                                </details>
+                                            </li>
+                                        </ul>
+                                    </details>
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary>
+                                            圖片
+                                        </summary>
+                                        <ul style="list-style: none;">
+                                            <li>
+                                                <details>
+                                                    <summary>&#60;img&#62;</summary>
+                                                    <details>
+                                                        <summary>
+                                                            屬性(Attribute)
+                                                        </summary>
+                                                        <ul style="list-style: none;">
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        src
+                                                                    </summary>
+                                                                    <p>載入圖片網址</p>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        alt
+                                                                    </summary>
+                                                                    <p>如果圖片沒有出來，顯示文字代替圖片</p>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        width
+                                                                    </summary>
+                                                                    <p>寬度(單位:相素)</p>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        height
+                                                                    </summary>
+                                                                    <p>高度(單位:相素)</p>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        title
+                                                                    </summary>
+                                                                    <p>滑鼠移到圖片上時自然浮現的說明</p>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </details>
+                                            </li>
+                                        </ul>
+                                    </details>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ol>    
+            </li>
+        </ul>
+    </body>
+
+</html>
