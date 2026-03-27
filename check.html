@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>我的雲端分類待辦清單 (支援手機拖曳)</title>
+    <title>我的雲端待辦清單 (含復原功能)</title>
     <style>
         :root {
             --primary-blue: #4A90E2;
             --light-blue: #add8e6;
             --done-blue: #0056b3;
+            --undo-orange: #ff9800; /* 復原按鈕顏色 */
             --danger-red: #ff4d4d;
             --bg-color: #f4f7f6;
         }
@@ -19,7 +20,6 @@
             background-color: var(--bg-color); 
             color: #333; 
             line-height: 1.6;
-            /* 防止手機拖曳時畫面跟著捲動 */
             touch-action: pan-y; 
         }
         
@@ -33,7 +33,7 @@
         select, input { padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; }
         input { flex-grow: 1; min-width: 150px; }
         
-        button { padding: 8px 12px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; }
+        button { padding: 8px 12px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; transition: 0.2s; }
         #addBtn { background-color: #4CAF50; color: white; }
         #clearAllBtn { background-color: #666; color: white; }
         
@@ -45,24 +45,18 @@
             background: white; border: 1px solid #ddd; padding: 12px; 
             margin-bottom: 10px; display: flex; align-items: center; 
             border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            /* 讓手機長按時不要彈出系統選單 */
             -webkit-user-select: none;
             user-select: none;
-            position: relative;
         }
 
         .item-number { font-weight: bold; color: #888; margin-right: 12px; min-width: 25px; }
         .item-text { flex-grow: 1; font-size: 16px; word-break: break-all; }
         
-        /* 拖曳中的視覺效果 */
-        li.dragging { 
-            opacity: 0.5; 
-            border: 2px dashed var(--primary-blue); 
-            background: #ebf3ff; 
-            z-index: 1000;
-        }
+        li.dragging { opacity: 0.5; border: 2px dashed var(--primary-blue); background: #ebf3ff; }
 
+        /* 按鈕樣式 */
         .done-btn { background-color: var(--light-blue); color: var(--done-blue); margin-left: 5px; }
+        .undo-btn { background-color: var(--undo-orange); color: white; margin-left: 5px; }
         .del-btn { background-color: var(--danger-red); color: white; margin-left: 5px; }
 
         .completed-item { opacity: 0.7; background-color: #f9f9f9; }
@@ -129,63 +123,57 @@
                 <span class="item-number"></span>
                 <span class="item-text">${text}</span>
                 <div style="display:flex;">
-                    ${!isCompleted ? '<button class="done-btn">完成</button>' : ''}
+                    ${!isCompleted ? '<button class="done-btn">完成</button>' : '<button class="undo-btn">復原</button>'}
                     <button class="del-btn">刪除</button>
                 </div>
             `;
 
-            // 按鈕事件
+            // 刪除按鈕
             li.querySelector('.del-btn').onclick = () => { li.remove(); updateNumbers(); saveToLocal(); };
+            
+            // 完成按鈕 (在未完成清單中)
             const doneBtn = li.querySelector('.done-btn');
             if (doneBtn) {
                 doneBtn.onclick = () => {
                     li.remove();
-                    createItemElement(text, true);
+                    createItemElement(text, true); // 移到已完成
                     saveToLocal();
                 };
             }
 
-            // 電腦版拖曳
-            li.addEventListener('dragstart', () => li.classList.add('dragging'));
-            li.addEventListener('dragend', () => {
-                li.classList.remove('dragging');
-                updateNumbers();
-                saveToLocal();
-            });
+            // 復原按鈕 (在已完成清單中)
+            const undoBtn = li.querySelector('.undo-btn');
+            if (undoBtn) {
+                undoBtn.onclick = () => {
+                    li.remove();
+                    createItemElement(text, false); // 移回待辦
+                    saveToLocal();
+                };
+            }
 
-            // 手機版拖曳處理 (Touch Events)
+            // --- 拖曳邏輯 ---
             if (!isCompleted) {
-                li.addEventListener('touchstart', (e) => {
-                    // 為了不干擾按鈕點擊，可以不做特別處理，由 touchmove 接手
-                }, {passive: true});
+                // 電腦版
+                li.addEventListener('dragstart', () => li.classList.add('dragging'));
+                li.addEventListener('dragend', () => { li.classList.remove('dragging'); updateNumbers(); saveToLocal(); });
 
+                // 手機版 (Touch)
                 li.addEventListener('touchmove', (e) => {
                     const touch = e.touches[0];
                     const draggingItem = li;
                     draggingItem.classList.add('dragging');
-
-                    // 找出手指位置下的元素
                     const elementUnderFinger = document.elementFromPoint(touch.clientX, touch.clientY);
                     const closestLi = elementUnderFinger?.closest('li');
-
                     if (closestLi && closestLi.parentNode === todoList && closestLi !== draggingItem) {
                         const box = closestLi.getBoundingClientRect();
-                        const offset = touch.clientY - box.top - box.height / 2;
-                        if (offset < 0) {
-                            todoList.insertBefore(draggingItem, closestLi);
-                        } else {
-                            todoList.insertBefore(draggingItem, closestLi.nextSibling);
-                        }
+                        const offset = touch.clientY - (box.top + box.height / 2);
+                        if (offset < 0) todoList.insertBefore(draggingItem, closestLi);
+                        else todoList.insertBefore(draggingItem, closestLi.nextSibling);
                     }
-                    // 防止捲動頁面
                     if (draggingItem.classList.contains('dragging')) e.preventDefault();
                 }, {passive: false});
 
-                li.addEventListener('touchend', () => {
-                    li.classList.remove('dragging');
-                    updateNumbers();
-                    saveToLocal();
-                });
+                li.addEventListener('touchend', () => { li.classList.remove('dragging'); updateNumbers(); saveToLocal(); });
             }
 
             if (isCompleted) doneList.appendChild(li);
@@ -193,7 +181,6 @@
             updateNumbers();
         }
 
-        // 載入、新增、清空邏輯與之前相同
         function loadFromLocal() {
             todoList.innerHTML = ""; doneList.innerHTML = "";
             const dayKey = dateSelect.value;
@@ -212,7 +199,6 @@
             if (confirm("清空紀錄？")) { todoList.innerHTML = ""; doneList.innerHTML = ""; saveToLocal(); }
         };
 
-        // 電腦版 dragover 依然保留
         todoList.addEventListener('dragover', e => {
             e.preventDefault();
             const draggingItem = document.querySelector('.dragging');
@@ -226,7 +212,7 @@
             const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
             return draggableElements.reduce((closest, child) => {
                 const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
+                const offset = y - (box.top + box.height / 2);
                 if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
                 else return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
