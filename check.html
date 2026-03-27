@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的雲端分類待辦清單</title>
+    <style>
+        :root {
+            --primary-blue: #4A90E2;
+            --light-blue: #add8e6;
+            --done-blue: #0056b3;
+            --danger-red: #ff4d4d;
+            --bg-color: #f4f7f6;
+        }
+
+        body { font-family: "Microsoft JhengHei", sans-serif; padding: 20px; background-color: var(--bg-color); color: #333; line-height: 1.6; }
+        
+        .control-panel { 
+            background: white; padding: 20px; border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;
+        }
+
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        
+        select, input { padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; }
+        input { flex-grow: 1; }
+        
+        button { padding: 8px 16px; cursor: pointer; border-radius: 4px; border: none; transition: 0.2s; font-weight: bold; }
+        button:hover { opacity: 0.8; }
+        button:active { transform: scale(0.95); }
+
+        #addBtn { background-color: #4CAF50; color: white; }
+        #clearAllBtn { background-color: #666; color: white; }
+        
+        /* 清單標題 */
+        h3 { border-left: 5px solid var(--primary-blue); padding-left: 10px; margin-top: 30px; color: #444; }
+
+        /* 清單基礎樣式 */
+        ol, ul { padding: 0; list-style: none; min-height: 20px; }
+        
+        li { 
+            background: white; border: 1px solid #ddd; padding: 12px; 
+            margin-bottom: 10px; display: flex; align-items: center; 
+            border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            transition: background 0.3s;
+        }
+
+        .item-number { font-weight: bold; color: #888; margin-right: 15px; min-width: 30px; text-align: center; }
+        .item-text { flex-grow: 1; font-size: 16px; word-break: break-all; }
+        
+        /* 拖曳中的樣式 */
+        li.dragging { opacity: 0.5; border: 2px dashed var(--primary-blue); background: #ebf3ff; }
+
+        /* 按鈕特定顏色 */
+        .done-btn { background-color: var(--light-blue); color: var(--done-blue); margin-left: 10px; }
+        .del-btn { background-color: var(--danger-red); color: white; margin-left: 8px; }
+
+        /* 已完成項目的視覺效果 */
+        .completed-item { opacity: 0.7; background-color: #f9f9f9; border-color: #eee; }
+        .completed-item .item-text { text-decoration: line-through; color: #999; }
+        .completed-item .item-number { color: #4CAF50; }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <label>📅 <b>選擇日期：</b></label>
+        <select id="dateSelect">
+            <option value="Monday">星期一 (Monday)</option>
+            <option value="Tuesday">星期二 (Tuesday)</option>
+            <option value="Wednesday">星期三 (Wednesday)</option>
+            <option value="Thursday">星期四 (Thursday)</option>
+            <option value="Friday">星期五 (Friday)</option>
+            <option value="Saturday">星期六 (Saturday)</option>
+            <option value="Sunday">星期日 (Sunday)</option>
+        </select>
+
+        <div class="input-group">
+            <input id="todoInput" placeholder="在此輸入新的待辦事項..." type="text">
+            <button id="addBtn">新增項目</button>
+            <button id="clearAllBtn">清空當日紀錄</button>
+        </div>
+    </div>
+
+    <h3 id="todoTitle">📝 尚未完成</h3>
+    <ol id="todoList"></ol>
+
+    <h3 id="doneTitle">✅ 當日已完成清單</h3>
+    <ul id="doneList"></ul>
+
+    <script>
+        const input = document.getElementById('todoInput');
+        const todoList = document.getElementById('todoList');
+        const doneList = document.getElementById('doneList');
+        const dateSelect = document.getElementById('dateSelect');
+
+        // --- 核心功能：更新編號 ---
+        function updateNumbers() {
+            // 待辦清單：顯示數字 1, 2, 3...
+            todoList.querySelectorAll('li').forEach((item, index) => {
+                const numSpan = item.querySelector('.item-number');
+                if (numSpan) numSpan.textContent = (index + 1) + ".";
+            });
+            // 已完成清單：顯示勾勾 ✓
+            doneList.querySelectorAll('li').forEach((item) => {
+                const numSpan = item.querySelector('.item-number');
+                if (numSpan) numSpan.textContent = "✓";
+            });
+        }
+
+        // --- 核心功能：儲存與載入 ---
+        function saveToLocal() {
+            const todoItems = [];
+            const doneItems = [];
+            todoList.querySelectorAll('.item-text').forEach(s => todoItems.push(s.textContent));
+            doneList.querySelectorAll('.item-text').forEach(s => doneItems.push(s.textContent));
+            
+            const dayKey = dateSelect.value;
+            localStorage.setItem('todo-' + dayKey, JSON.stringify(todoItems));
+            localStorage.setItem('done-' + dayKey, JSON.stringify(doneItems));
+        }
+
+        function loadFromLocal() {
+            todoList.innerHTML = "";
+            doneList.innerHTML = "";
+            const dayKey = dateSelect.value;
+            
+            const todoData = JSON.parse(localStorage.getItem('todo-' + dayKey) || "[]");
+            const doneData = JSON.parse(localStorage.getItem('done-' + dayKey) || "[]");
+            
+            todoData.forEach(text => createItemElement(text, false));
+            doneData.forEach(text => createItemElement(text, true));
+            updateNumbers(); // 載入後確保編號正確
+        }
+
+        // --- 核心功能：建立項目 ---
+        function createItemElement(text, isCompleted) {
+            const li = document.createElement('li');
+            li.draggable = !isCompleted; 
+            if(isCompleted) li.classList.add('completed-item');
+
+            li.innerHTML = `
+                <span class="item-number"></span>
+                <span class="item-text">${text}</span>
+                <div class="btn-group">
+                    ${!isCompleted ? '<button class="done-btn">完成</button>' : ''}
+                    <button class="del-btn">刪除</button>
+                </div>
+            `;
+
+            // 完成按鈕邏輯
+            const doneBtn = li.querySelector('.done-btn');
+            if (doneBtn) {
+                doneBtn.onclick = () => {
+                    li.remove();
+                    createItemElement(text, true); // 搬移到完成區
+                    saveToLocal();
+                };
+            }
+
+            // 刪除按鈕邏輯
+            li.querySelector('.del-btn').onclick = () => {
+                li.remove();
+                updateNumbers();
+                saveToLocal();
+            };
+
+            // 拖曳邏輯 (僅限待辦事項)
+            if (!isCompleted) {
+                li.addEventListener('dragstart', () => li.classList.add('dragging'));
+                li.addEventListener('dragend', () => {
+                    li.classList.remove('dragging');
+                    updateNumbers();
+                    saveToLocal();
+                });
+            }
+
+            if (isCompleted) {
+                doneList.appendChild(li);
+            } else {
+                todoList.appendChild(li);
+            }
+            
+            updateNumbers(); // 建立後立即更新編號
+        }
+
+        function addItem() {
+            const text = input.value.trim();
+            if (text === "") return;
+            createItemElement(text, false);
+            saveToLocal();
+            input.value = "";
+            input.focus();
+        }
+
+        // --- 事件監聽 ---
+        dateSelect.onchange = loadFromLocal;
+        document.getElementById('addBtn').onclick = addItem;
+        
+        document.getElementById('clearAllBtn').onclick = () => {
+            if (confirm(`確定要清空 ${dateSelect.value} 的所有紀錄嗎？`)) {
+                todoList.innerHTML = "";
+                doneList.innerHTML = "";
+                saveToLocal();
+            }
+        };
+
+        // 拖曳放置 (僅針對待辦清單)
+        todoList.addEventListener('dragover', e => {
+            e.preventDefault();
+            const draggingItem = document.querySelector('.dragging');
+            if (!draggingItem) return;
+            const afterElement = getDragAfterElement(todoList, e.clientY);
+            if (afterElement == null) {
+                todoList.appendChild(draggingItem);
+            } else {
+                todoList.insertBefore(draggingItem, afterElement);
+            }
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else { return closest; }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        input.addEventListener('keypress', e => { if (e.key === 'Enter') addItem(); });
+
+        // 初始化
+        window.onload = loadFromLocal;
+    </script>
+</body>
+</html>
