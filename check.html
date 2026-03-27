@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>我的雲端待辦清單 (含復原功能)</title>
+    <title>我的雲端待辦清單 (安全確認版)</title>
     <style>
         :root {
             --primary-blue: #4A90E2;
             --light-blue: #add8e6;
             --done-blue: #0056b3;
-            --undo-orange: #ff9800; /* 復原按鈕顏色 */
+            --undo-orange: #ff9800;
             --danger-red: #ff4d4d;
             --bg-color: #f4f7f6;
         }
@@ -54,7 +54,6 @@
         
         li.dragging { opacity: 0.5; border: 2px dashed var(--primary-blue); background: #ebf3ff; }
 
-        /* 按鈕樣式 */
         .done-btn { background-color: var(--light-blue); color: var(--done-blue); margin-left: 5px; }
         .undo-btn { background-color: var(--undo-orange); color: white; margin-left: 5px; }
         .del-btn { background-color: var(--danger-red); color: white; margin-left: 5px; }
@@ -80,7 +79,7 @@
         <div class="input-group">
             <input id="todoInput" placeholder="輸入事項..." type="text">
             <button id="addBtn">新增</button>
-            <button id="clearAllBtn">清空</button>
+            <button id="clearAllBtn">清空當日</button>
         </div>
     </div>
 
@@ -128,36 +127,39 @@
                 </div>
             `;
 
-            // 刪除按鈕
-            li.querySelector('.del-btn').onclick = () => { li.remove(); updateNumbers(); saveToLocal(); };
+            // ✨ 修改點：單項刪除確認
+            li.querySelector('.del-btn').onclick = () => { 
+                if (confirm(`確定要刪除「${text}」嗎？`)) {
+                    li.remove(); 
+                    updateNumbers(); 
+                    saveToLocal(); 
+                }
+            };
             
-            // 完成按鈕 (在未完成清單中)
             const doneBtn = li.querySelector('.done-btn');
             if (doneBtn) {
                 doneBtn.onclick = () => {
                     li.remove();
-                    createItemElement(text, true); // 移到已完成
+                    createItemElement(text, true);
                     saveToLocal();
                 };
             }
 
-            // 復原按鈕 (在已完成清單中)
             const undoBtn = li.querySelector('.undo-btn');
             if (undoBtn) {
                 undoBtn.onclick = () => {
+                    // 復原通常不需要確認，但如果需要也可以加
                     li.remove();
-                    createItemElement(text, false); // 移回待辦
+                    createItemElement(text, false);
                     saveToLocal();
                 };
             }
 
-            // --- 拖曳邏輯 ---
+            // 拖曳邏輯 (電腦與手機共用)
             if (!isCompleted) {
-                // 電腦版
                 li.addEventListener('dragstart', () => li.classList.add('dragging'));
                 li.addEventListener('dragend', () => { li.classList.remove('dragging'); updateNumbers(); saveToLocal(); });
 
-                // 手機版 (Touch)
                 li.addEventListener('touchmove', (e) => {
                     const touch = e.touches[0];
                     const draggingItem = li;
@@ -195,8 +197,15 @@
             const text = input.value.trim();
             if (text) { createItemElement(text, false); saveToLocal(); input.value = ""; }
         };
+
+        // ✨ 修改點：清空當日確認
         document.getElementById('clearAllBtn').onclick = () => {
-            if (confirm("清空紀錄？")) { todoList.innerHTML = ""; doneList.innerHTML = ""; saveToLocal(); }
+            if (todoList.children.length === 0 && doneList.children.length === 0) return;
+            if (confirm(`確定要清空 ${dateSelect.value} 的所有項目嗎？此動作無法復原。`)) { 
+                todoList.innerHTML = ""; 
+                doneList.innerHTML = ""; 
+                saveToLocal(); 
+            }
         };
 
         todoList.addEventListener('dragover', e => {
