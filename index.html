@@ -1,198 +1,329 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meat charset = "utf-8">
-        <meta name="author" content="Ella">
-        <meta name="keyword" content="note">
-        <meta name="description" content="note114018">
-        <link rel="stylesheet" href="style.css">
-        <title>The note</title>
-    </head>
-    <body>
-        <ul style="list-style: none;">
-            <li>
-                <h2><a href = "https://hackmd.io/@Ccj-07/BJCiF_0kgl" target = "_blank"><em>第二周自學筆記</em></a></h2>
-                <br>
-                <img src = "https://tse3.mm.bing.net/th/id/OIP.8k8Xte8rXq33XtnoPntSrgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt = "好像出了點問題T_T"
-                title = "高雄女中資訊研究社" width = "1300" height = "500">
-                <ol type="1">
-                    <li>
-                        <details open>
-                            <summary>我學過的標籤</summary>
-                            <ul style="list-style: square;">
-                                <li>
-                                    <details>
-                                        <summary>隱藏訊息標籤</summary>
-                                        <ul style="list-style: none;">
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;title&#62;</summary>
-                                                    <p>語意標籤，表示網頁的標題，通常在標籤&#60;head&#62;中</p>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;meat&#62;</summary>
-                                                    <p>將這份網頁的資訊，提供給瀏覽器、社群網站或搜尋引擎，
-                                                        <br>可提供的資訊包含了頁面編碼、作者資訊、關鍵字、頁面描述、網站縮圖、頁面發布時間…等。</p>
-                                                </details> 
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;head&#62;</summary>
-                                                    <p>這個標籤內可以儲存只想給瀏覽器的資訊，不會顯示在網頁內，但是如果有文字或者其他有顯示功能的仍會被<br>
-                                                    顯示於網頁內。</p>
-                                                </details> 
-                                            </li>
-                                        </ul>
-                                    </details>
+  <!DOCTYPE html>
+  <html lang="zh-TW">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>🎮 遊戲大廳</title>
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
 
-                                </li>
-                                <li>
-                                    <details>
-                                        <summary>效果標籤</summary>
-                                        <ul style="list-style: none;">
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;strong&#62;</summary>
-                                                    <p>表示這個字的重要性，屬於語言標籤之一，對SEO很有幫助</p>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;em&#62;</summary>
-                                                    <p>語意標籤，與&#60;i&#62;效果相同，只是<b>更加強調這個被標記元素的重要性</b>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-                                <li>
-                                    <details>
-                                        <summary>
-                                            圖片
-                                        </summary>
-                                        <ul style="list-style: none;">
-                                            <li>
-                                                <details>
-                                                    <summary>&#60;img&#62;</summary>
-                                                    <details>
-                                                        <summary>
-                                                            屬性(Attribute)
-                                                        </summary>
-                                                        <ul style="list-style: none;">
-                                                            <li>
-                                                                <details>
-                                                                    <summary>
-                                                                        src
-                                                                    </summary>
-                                                                    <p>載入圖片網址</p>
-                                                                </details>
-                                                            </li>
-                                                            <li>
-                                                                <details>
-                                                                    <summary>
-                                                                        alt
-                                                                    </summary>
-                                                                    <p>如果圖片沒有出來，顯示文字代替圖片</p>
-                                                                </details>
-                                                            </li>
-                                                            <li>
-                                                                <details>
-                                                                    <summary>
-                                                                        width
-                                                                    </summary>
-                                                                    <p>寬度(單位:相素)</p>
-                                                                </details>
-                                                            </li>
-                                                            <li>
-                                                                <details>
-                                                                    <summary>
-                                                                        height
-                                                                    </summary>
-                                                                    <p>高度(單位:相素)</p>
-                                                                </details>
-                                                            </li>
-                                                            <li>
-                                                                <details>
-                                                                    <summary>
-                                                                        title
-                                                                    </summary>
-                                                                    <p>滑鼠移到圖片上時自然浮現的說明</p>
-                                                                </details>
-                                                            </li>
-                                                        </ul>
-                                                    </details>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-                                <li>
-                                    <details>
-                                        <summary>輸入</summary>
-                                        <details>
-                                            <summary>&#60;input&#62;的屬性(Attribute)</summary>
-                                            <details>
-                                                <summary>type</summary>
-                                                <ul style="list-style: square;">
-                                                    <li>
-                                                        <details>
-                                                            <summary>
-                                                                date
-                                                            </summary>
-                                                            <p>可以讓使用者選取日期</p>
-                                                        </details>
-                                                    </li>
-                                                    <li>
-                                                        <details>
-                                                            <summary>
-                                                                time
-                                                            </summary>
-                                                            <p>可以讓使用者選取時間</p>
-                                                        </details>
-                                                    </li>
-                                                    <li>
-                                                        <details>
-                                                            <summary>
-                                                                range
-                                                            </summary>
-                                                            <p>可以讓使用者選取範圍</p>
-                                                        </details>
-                                                    </li>
-                                                    <li>
-                                                        <details>
-                                                            <summary>
-                                                                password
-                                                            </summary>
-                                                            <p>可以讓使用者輸入的資料隱藏</p>
-                                                        </details>
-                                                    </li>
-                                                </ul>
-                                            </details>
-                                            <details>
-                                                <summary>placeholder</summary>
-                                                <p>輸入提示</p>
-                                            </details>
-                                        </details>
-                                    </details>
-                                </li>
-                            </ul>
-                        </details>
-                    </li>
-                </ol>    
-            </li>
-            <li><br><a href = "https://hackmd.io/@Ccj-07/S1Qh4hvHgg" target = "_blank"><h2><em>第三周自學筆記</em></h2></a></li>
-        </ul>
-    </body>
+          body {
+              min-height: 100vh;
+              background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460
+  100%);
+              font-family: 'Segoe UI', Arial, sans-serif;
+              overflow-x: hidden;
+          }
 
-</html>
+          /* ===== 主選單 ===== */
+          #menu {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              padding: 40px 20px;
+          }
 
+          .logo {
+              font-size: 3.5rem;
+              color: #fff;
+              margin-bottom: 10px;
+              text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+              animation: float 3s ease-in-out infinite;
+          }
 
+          @keyframes float {
+              0%, 100% { transform: translateY(0); }
+              50% { transform: translateY(-10px); }
+          }
 
+          .subtitle {
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 1.1rem;
+              margin-bottom: 50px;
+              letter-spacing: 3px;
+          }
 
+          .game-cards {
+              display: flex;
+              gap: 30px;
+              flex-wrap: wrap;
+              justify-content: center;
+          }
 
+          .card {
+              width: 280px;
+              background: rgba(255, 255, 255, 0.08);
+              backdrop-filter: blur(10px);
+              border-radius: 20px;
+              padding: 30px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              position: relative;
+              overflow: hidden;
+          }
 
+          .card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 4px;
+              background: linear-gradient(90deg, var(--accent1), var(--accent2));
+              opacity: 0;
+              transition: opacity 0.3s;
+          }
 
+          .card:hover::before {
+              opacity: 1;
+          }
 
+          .card:hover {
+              transform: translateY(-10px);
+              background: rgba(255, 255, 255, 0.12);
+              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          }
 
+          .card-icon {
+              width: 80px;
+              height: 80px;
+              margin: 0 auto 20px;
+              border-radius: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 2.5rem;
+          }
+
+          .card[data-game="2048"] { --accent1: #edc22e; --accent2: #f59563; }
+          .card[data-game="2048"] .card-icon { background: linear-gradient(135deg,
+  #edc22e, #f59563); }
+
+          .card[data-game="snake"] { --accent1: #4ade80; --accent2: #22c55e; }
+          .card[data-game="snake"] .card-icon { background: linear-gradient(135deg,
+  #4ade80, #22c55e); }
+
+          .card[data-game="maze"] { --accent1: #8b7aa0; --accent2: #8866aa; }
+          .card[data-game="maze"] .card-icon { background: linear-gradient(135deg,
+  #8b7aa0, #8866aa); }
+
+          .card[data-game="minesweeper"] { --accent1: #ef4444; --accent2: #dc2626; }
+          .card[data-game="minesweeper"] .card-icon { background:
+  linear-gradient(135deg, #ef4444, #dc2626); }
+
+          .card-title {
+              color: #fff;
+              font-size: 1.5rem;
+              font-weight: bold;
+              margin-bottom: 10px;
+              text-align: center;
+          }
+
+          .card-desc {
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 0.9rem;
+              text-align: center;
+              line-height: 1.6;
+          }
+
+          .card-hint {
+              color: rgba(255, 255, 255, 0.4);
+              font-size: 0.75rem;
+              text-align: center;
+              margin-top: 20px;
+              opacity: 0;
+              transition: opacity 0.3s;
+          }
+
+          .card:hover .card-hint {
+              opacity: 1;
+          }
+
+          /* ===== 遊戲區域 ===== */
+          #gameArea {
+              display: none;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: #000;
+          }
+
+          #gameFrame {
+              width: 100%;
+              height: 100%;
+              border: none;
+          }
+
+          #backBtn {
+              position: fixed;
+              top: 20px;
+              left: 20px;
+              z-index: 100;
+              background: rgba(139, 122, 160, 0.9);
+              border: 2px solid rgba(200, 180, 220, 0.6);
+              color: #fff;
+              padding: 12px 24px;
+              border-radius: 30px;
+              cursor: pointer;
+              font-size: 1rem;
+              backdrop-filter: blur(10px);
+              transition: all 0.3s;
+              display: none;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+          }
+
+          #backBtn:hover {
+              background: rgba(160, 140, 180, 0.95);
+              transform: scale(1.05);
+              box-shadow: 0 6px 20px rgba(139, 122, 160, 0.4);
+          }
+
+          #backBtn::before {
+              content: '← ';
+          }
+
+          /* 載入動畫 */
+          .loading {
+              display: none;
+              position: fixed;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              color: #fff;
+              font-size: 1.5rem;
+          }
+
+          @keyframes spin {
+              to { transform: rotate(360deg); }
+          }
+      </style>
+  </head>
+  <body>
+      <!-- 主選單 -->
+      <div id="menu">
+          <div class="logo">🎮 遊戲大廳</div>
+          <div class="subtitle">GAME LOBBY</div>
+
+          <div class="game-cards">
+              <div class="card" data-game="2048">
+                  <div class="card-icon">🔢</div>
+                  <div class="card-title">2048</div>
+                  <div class="card-desc">
+                      經典滑塊益智遊戲<br>
+                      合併數字，挑戰 2048！
+                  </div>
+                  <div class="card-hint">點擊進入遊戲</div>
+              </div>
+
+              <div class="card" data-game="snake">
+                  <div class="card-icon">🐍</div>
+                  <div class="card-title">貪吃蛇</div>
+                  <div class="card-desc">
+                      操控蛇吃遍美食<br>
+                      考驗你的反應速度！
+                  </div>
+                  <div class="card-hint">點擊進入遊戲</div>
+              </div>
+
+              <div class="card" data-game="maze">
+                  <div class="card-icon">👹</div>
+                  <div class="card-title">逃出深淵</div>
+                  <div class="card-desc">
+                      在黑暗中甦醒<br>
+                      逃離怪物的追擊！
+                  </div>
+                  <div class="card-hint">點擊進入遊戲</div>
+              </div>
+
+              <div class="card" data-game="minesweeper">
+                  <div class="card-icon">💣</div>
+                  <div class="card-title">踩地雷</div>
+                  <div class="card-desc">
+                      經典掃雷益智遊戲<br>
+                      小心！每一步都可能是最後一步！
+                  </div>
+                  <div class="card-hint">點擊進入遊戲</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- 遊戲區域 -->
+      <div id="gameArea">
+          <iframe id="gameFrame"></iframe>
+      </div>
+
+      <button id="backBtn">返回大廳</button>
+      <div class="loading" id="loading">載入中...</div>
+
+      <script>
+          const menu = document.getElementById('menu');
+          const gameArea = document.getElementById('gameArea');
+          const gameFrame = document.getElementById('gameFrame');
+          const backBtn = document.getElementById('backBtn');
+          const loading = document.getElementById('loading');
+          const cards = document.querySelectorAll('.card');
+
+          const gameFiles = {
+              '2048': '2048.html',
+              'snake': 'snake.html',
+              'maze': 'maze.html',
+              'minesweeper': 'minesweeper.html'
+          };
+
+          function openGame(gameName) {
+              // 顯示載入中
+              loading.style.display = 'block';
+
+              // 隱藏選單，顯示遊戲區域
+              menu.style.display = 'none';
+              gameArea.style.display = 'block';
+              backBtn.style.display = 'block';
+
+              // 載入遊戲
+              gameFrame.src = gameFiles[gameName];
+
+              // iframe 載入完成後隱藏載入動畫
+              gameFrame.onload = function() {
+                  loading.style.display = 'none';
+              };
+          }
+
+          function closeGame() {
+              // 顯示選單，隱藏遊戲區域
+              menu.style.display = 'flex';
+              gameArea.style.display = 'none';
+              backBtn.style.display = 'none';
+
+              // 清除 iframe
+              gameFrame.src = '';
+          }
+
+          // 卡片點擊事件
+          cards.forEach(card => {
+              card.addEventListener('click', () => {
+                  const gameName = card.dataset.game;
+                  openGame(gameName);
+              });
+          });
+
+          // 返回按鈕
+          backBtn.addEventListener('click', closeGame);
+
+          // ESC 鍵返回
+          document.addEventListener('keydown', e => {
+              if (e.key === 'Escape' && gameArea.style.display === 'block') {
+                  closeGame();
+              }
+          });
+      </script>
+  </body>
+  </html>
