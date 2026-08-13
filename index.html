@@ -1,329 +1,560 @@
-  <!DOCTYPE html>
-  <html lang="zh-TW">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>🎮 遊戲大廳</title>
-      <style>
-          * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="弱勢族群升學與補助資訊整合平台 — 讓每個孩子都能找到適合自己的升學路" />
+  <title>升學補助通 — 弱勢族群升學資訊整合平台</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            warm: {
+              50:  '#fffbf5',
+              100: '#fff3e0',
+              200: '#ffe0b2',
+              300: '#ffcc80',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
+            teal: {
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+            }
+          },
+          fontSize: {
+            base: 'var(--base-font-size, 1rem)',
           }
+        }
+      }
+    }
+  </script>
 
-          body {
-              min-height: 100vh;
-              background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460
-  100%);
-              font-family: 'Segoe UI', Arial, sans-serif;
-              overflow-x: hidden;
-          }
+  <style>
+    :root {
+      --font-scale: 1;
+      --base-font-size: 1rem;
+    }
 
-          /* ===== 主選單 ===== */
-          #menu {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              min-height: 100vh;
-              padding: 40px 20px;
-          }
+    html { font-size: calc(16px * var(--font-scale)); }
 
-          .logo {
-              font-size: 3.5rem;
-              color: #fff;
-              margin-bottom: 10px;
-              text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-              animation: float 3s ease-in-out infinite;
-          }
+    /* High-contrast mode overrides */
+    html.high-contrast {
+      --hc-bg: #000000;
+      --hc-surface: #1a1a1a;
+      --hc-text: #ffffff;
+      --hc-accent: #ffff00;
+      --hc-border: #ffff00;
+    }
+    html.high-contrast body {
+      background-color: var(--hc-bg) !important;
+      color: var(--hc-text) !important;
+    }
+    html.high-contrast .hc-surface {
+      background-color: var(--hc-surface) !important;
+      border-color: var(--hc-border) !important;
+      color: var(--hc-text) !important;
+    }
+    html.high-contrast .hc-accent-text { color: var(--hc-accent) !important; }
+    html.high-contrast .hc-accent-bg   { background-color: var(--hc-accent) !important; color: #000 !important; }
+    html.high-contrast .hc-border      { border-color: var(--hc-border) !important; }
+    html.high-contrast .hc-header      { background-color: #111 !important; border-bottom: 2px solid #ffff00 !important; }
+    html.high-contrast .hc-footer      { background-color: #111 !important; border-top: 2px solid #ffff00 !important; }
+    html.high-contrast .hc-hero        { background: #111 !important; }
+    html.high-contrast .hc-card        { background-color: #1a1a1a !important; border: 2px solid #ffff00 !important; }
+    html.high-contrast a               { color: #ffff00 !important; }
+    html.high-contrast .hc-hide        { display: none !important; }
 
-          @keyframes float {
-              0%, 100% { transform: translateY(0); }
-              50% { transform: translateY(-10px); }
-          }
+    /* Eye-care (warm tinted) mode */
+    html.eye-care body       { background-color: #fdf6e3 !important; color: #3a3226 !important; }
+    html.eye-care .hc-header { background-color: #f5edd8 !important; }
+    html.eye-care .hc-footer { background-color: #f5edd8 !important; }
+    html.eye-care .hc-card   { background-color: #fff8ec !important; }
 
-          .subtitle {
-              color: rgba(255, 255, 255, 0.6);
-              font-size: 1.1rem;
-              margin-bottom: 50px;
-              letter-spacing: 3px;
-          }
+    /* Focus ring for accessibility */
+    :focus-visible { outline: 3px solid #f97316; outline-offset: 3px; border-radius: 4px; }
 
-          .game-cards {
-              display: flex;
-              gap: 30px;
-              flex-wrap: wrap;
-              justify-content: center;
-          }
+    /* Skip link */
+    .skip-link { position: absolute; top: -100%; left: 1rem; background: #f97316; color: #fff; padding: .5rem 1rem; border-radius: 0 0 8px 8px; font-weight: 700; z-index: 9999; transition: top .2s; }
+    .skip-link:focus { top: 0; }
 
-          .card {
-              width: 280px;
-              background: rgba(255, 255, 255, 0.08);
-              backdrop-filter: blur(10px);
-              border-radius: 20px;
-              padding: 30px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              border: 1px solid rgba(255, 255, 255, 0.1);
-              position: relative;
-              overflow: hidden;
-          }
+    /* Smooth transition for mode switches */
+    body, header, footer, section, .card-block { transition: background-color .25s, color .25s, border-color .25s; }
+  </style>
+</head>
 
-          .card::before {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              height: 4px;
-              background: linear-gradient(90deg, var(--accent1), var(--accent2));
-              opacity: 0;
-              transition: opacity 0.3s;
-          }
+<body class="bg-warm-50 text-gray-900 font-sans antialiased">
 
-          .card:hover::before {
-              opacity: 1;
-          }
+  <!-- Skip navigation for screen readers -->
+  <a href="#main-content" class="skip-link">跳至主要內容</a>
 
-          .card:hover {
-              transform: translateY(-10px);
-              background: rgba(255, 255, 255, 0.12);
-              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-          }
+  <!-- ===== HEADER ===== -->
+  <header class="hc-header sticky top-0 z-50 bg-white shadow-md" role="banner">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
 
-          .card-icon {
-              width: 80px;
-              height: 80px;
-              margin: 0 auto 20px;
-              border-radius: 16px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 2.5rem;
-          }
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 min-w-0" aria-label="升學補助通 首頁">
+        <span class="text-3xl" aria-hidden="true">🏫</span>
+        <div class="leading-tight">
+          <p class="font-black text-lg text-orange-600 whitespace-nowrap">升學補助通</p>
+          <p class="text-xs text-gray-500 hidden sm:block">弱勢族群升學資訊整合平台</p>
+        </div>
+      </a>
 
-          .card[data-game="2048"] { --accent1: #edc22e; --accent2: #f59563; }
-          .card[data-game="2048"] .card-icon { background: linear-gradient(135deg,
-  #edc22e, #f59563); }
+      <!-- Controls group -->
+      <div class="flex items-center gap-2 flex-shrink-0">
 
-          .card[data-game="snake"] { --accent1: #4ade80; --accent2: #22c55e; }
-          .card[data-game="snake"] .card-icon { background: linear-gradient(135deg,
-  #4ade80, #22c55e); }
+        <!-- Font size buttons -->
+        <div class="flex items-center gap-1 border border-gray-200 rounded-lg p-1" role="group" aria-label="字體大小控制">
+          <button id="btn-font-down" onclick="adjustFont(-0.1)" title="縮小字體"
+            class="w-9 h-9 flex items-center justify-center rounded-md text-gray-700 hover:bg-orange-100 active:scale-95 font-bold text-lg"
+            aria-label="縮小字體">A-</button>
+          <button id="btn-font-reset" onclick="adjustFont(0)" title="重置字體"
+            class="w-9 h-9 flex items-center justify-center rounded-md text-gray-700 hover:bg-orange-100 active:scale-95 font-bold"
+            aria-label="重置字體">A</button>
+          <button id="btn-font-up" onclick="adjustFont(0.1)" title="放大字體"
+            class="w-9 h-9 flex items-center justify-center rounded-md text-gray-700 hover:bg-orange-100 active:scale-95 font-bold text-xl"
+            aria-label="放大字體">A+</button>
+        </div>
 
-          .card[data-game="maze"] { --accent1: #8b7aa0; --accent2: #8866aa; }
-          .card[data-game="maze"] .card-icon { background: linear-gradient(135deg,
-  #8b7aa0, #8866aa); }
+        <!-- Eye-care toggle -->
+        <button id="btn-eyecare" onclick="toggleEyeCare()" title="護眼模式"
+          class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-orange-100 active:scale-95 text-xl"
+          aria-label="切換護眼模式" aria-pressed="false">🌙</button>
 
-          .card[data-game="minesweeper"] { --accent1: #ef4444; --accent2: #dc2626; }
-          .card[data-game="minesweeper"] .card-icon { background:
-  linear-gradient(135deg, #ef4444, #dc2626); }
+        <!-- High-contrast toggle -->
+        <button id="btn-hc" onclick="toggleHighContrast()" title="高對比模式"
+          class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-orange-100 active:scale-95 text-xl"
+          aria-label="切換高對比模式" aria-pressed="false">◑</button>
 
-          .card-title {
-              color: #fff;
-              font-size: 1.5rem;
-              font-weight: bold;
-              margin-bottom: 10px;
-              text-align: center;
-          }
+        <!-- Mobile menu button -->
+        <button id="btn-menu" onclick="toggleMenu()" title="開啟選單"
+          class="sm:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-orange-100 active:scale-95"
+          aria-label="開啟導覽選單" aria-expanded="false" aria-controls="main-nav">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
 
-          .card-desc {
-              color: rgba(255, 255, 255, 0.6);
-              font-size: 0.9rem;
-              text-align: center;
-              line-height: 1.6;
-          }
+    <!-- Navigation -->
+    <nav id="main-nav" class="hidden sm:block border-t border-gray-100 hc-border" role="navigation" aria-label="主要導覽">
+      <ul class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row sm:gap-1 py-2" role="list">
+        <li><a href="#scholarships" class="block px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-orange-100 hover:text-orange-700 transition-colors">💰 獎助學金</a></li>
+        <li><a href="#admission"    class="block px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-orange-100 hover:text-orange-700 transition-colors">🎓 升學管道</a></li>
+        <li><a href="#resources"   class="block px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-orange-100 hover:text-orange-700 transition-colors">📖 學習資源</a></li>
+        <li><a href="#consult"     class="block px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-orange-100 hover:text-orange-700 transition-colors">🙋 諮詢 FAQ</a></li>
+        <li><a href="#quick-check" class="block px-4 py-2 rounded-lg font-bold text-orange-600 hover:bg-orange-100 transition-colors">⚡ 快速篩選</a></li>
+      </ul>
+    </nav>
+  </header>
 
-          .card-hint {
-              color: rgba(255, 255, 255, 0.4);
-              font-size: 0.75rem;
-              text-align: center;
-              margin-top: 20px;
-              opacity: 0;
-              transition: opacity 0.3s;
-          }
+  <!-- ===== MAIN ===== -->
+  <main id="main-content" tabindex="-1">
 
-          .card:hover .card-hint {
-              opacity: 1;
-          }
+    <!-- ===== HERO ===== -->
+    <section class="hc-hero bg-gradient-to-br from-orange-50 to-teal-50 py-16 px-4" aria-labelledby="hero-heading">
+      <div class="max-w-3xl mx-auto text-center">
 
-          /* ===== 遊戲區域 ===== */
-          #gameArea {
-              display: none;
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: #000;
-          }
+        <p class="inline-block bg-orange-100 text-orange-700 font-semibold text-sm px-4 py-1 rounded-full mb-6">
+          免費 · 無廣告 · 為弱勢學生而建
+        </p>
 
-          #gameFrame {
-              width: 100%;
-              height: 100%;
-              border: none;
-          }
+        <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6">
+          每個孩子都值得<br />
+          <span class="text-orange-600">被看見、被支持</span>
+        </h1>
 
-          #backBtn {
-              position: fixed;
-              top: 20px;
-              left: 20px;
-              z-index: 100;
-              background: rgba(139, 122, 160, 0.9);
-              border: 2px solid rgba(200, 180, 220, 0.6);
-              color: #fff;
-              padding: 12px 24px;
-              border-radius: 30px;
-              cursor: pointer;
-              font-size: 1rem;
-              backdrop-filter: blur(10px);
-              transition: all 0.3s;
-              display: none;
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-          }
+        <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-xl mx-auto leading-relaxed">
+          不論家庭背景，你都有資格追求更好的未來。<br class="hidden sm:block"/>
+          我們幫你找到補助、升學方式與學習資源。
+        </p>
 
-          #backBtn:hover {
-              background: rgba(160, 140, 180, 0.95);
-              transform: scale(1.05);
-              box-shadow: 0 6px 20px rgba(139, 122, 160, 0.4);
-          }
+        <!-- Primary CTA -->
+        <a id="quick-check" href="#wizard"
+          class="inline-flex items-center justify-center gap-3 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-xl px-8 py-5 rounded-2xl shadow-lg transition-all min-w-[280px]"
+          aria-describedby="cta-desc">
+          <span aria-hidden="true">⚡</span>
+          3 分鐘快速篩選我的適用補助
+        </a>
+        <p id="cta-desc" class="text-sm text-gray-500 mt-3">不需要登入，不蒐集個人資料</p>
 
-          #backBtn::before {
-              content: '← ';
-          }
+        <!-- Trust badges -->
+        <div class="flex flex-wrap justify-center gap-6 mt-10 text-sm text-gray-500">
+          <span class="flex items-center gap-1"><span aria-hidden="true">✅</span> 符合教育部規範</span>
+          <span class="flex items-center gap-1"><span aria-hidden="true">♿</span> WCAG 2.1 AA</span>
+          <span class="flex items-center gap-1"><span aria-hidden="true">📱</span> 手機優先設計</span>
+        </div>
+      </div>
+    </section>
 
-          /* 載入動畫 */
-          .loading {
-              display: none;
-              position: fixed;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              color: #fff;
-              font-size: 1.5rem;
-          }
+    <!-- ===== QUICK WIZARD PLACEHOLDER ===== -->
+    <section id="wizard" class="bg-white border-y border-orange-100 py-10 px-4" aria-labelledby="wizard-heading">
+      <div class="max-w-3xl mx-auto">
+        <h2 id="wizard-heading" class="text-2xl font-black text-gray-900 mb-2 text-center">⚡ 快速篩選我的補助</h2>
+        <p class="text-center text-gray-500 mb-8">回答幾個問題，立即找到適合你的補助與升學方案</p>
 
-          @keyframes spin {
-              to { transform: rotate(360deg); }
-          }
-      </style>
-  </head>
-  <body>
-      <!-- 主選單 -->
-      <div id="menu">
-          <div class="logo">🎮 遊戲大廳</div>
-          <div class="subtitle">GAME LOBBY</div>
+        <div class="grid sm:grid-cols-3 gap-4" role="group" aria-label="身份選擇">
+          <button onclick="selectWizard(this, '國中生')"
+            class="wizard-btn hc-card flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 active:scale-95 transition-all font-semibold text-gray-800 text-lg">
+            <span class="text-4xl" aria-hidden="true">🏫</span>國中生
+          </button>
+          <button onclick="selectWizard(this, '高中職生')"
+            class="wizard-btn hc-card flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 active:scale-95 transition-all font-semibold text-gray-800 text-lg">
+            <span class="text-4xl" aria-hidden="true">📚</span>高中職生
+          </button>
+          <button onclick="selectWizard(this, '大專生')"
+            class="wizard-btn hc-card flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 active:scale-95 transition-all font-semibold text-gray-800 text-lg">
+            <span class="text-4xl" aria-hidden="true">🎓</span>大專生
+          </button>
+        </div>
 
-          <div class="game-cards">
-              <div class="card" data-game="2048">
-                  <div class="card-icon">🔢</div>
-                  <div class="card-title">2048</div>
-                  <div class="card-desc">
-                      經典滑塊益智遊戲<br>
-                      合併數字，挑戰 2048！
-                  </div>
-                  <div class="card-hint">點擊進入遊戲</div>
-              </div>
+        <div id="wizard-result" class="hidden mt-6 p-5 bg-orange-50 rounded-2xl border border-orange-200 text-gray-800" role="alert" aria-live="polite">
+          <!-- Dynamically filled by JS -->
+        </div>
+      </div>
+    </section>
 
-              <div class="card" data-game="snake">
-                  <div class="card-icon">🐍</div>
-                  <div class="card-title">貪吃蛇</div>
-                  <div class="card-desc">
-                      操控蛇吃遍美食<br>
-                      考驗你的反應速度！
-                  </div>
-                  <div class="card-hint">點擊進入遊戲</div>
-              </div>
+    <!-- ===== FOUR CORE CARDS ===== -->
+    <section class="py-16 px-4 bg-warm-50" aria-labelledby="core-heading">
+      <div class="max-w-6xl mx-auto">
+        <h2 id="core-heading" class="text-2xl sm:text-3xl font-black text-gray-900 text-center mb-3">四大核心資源</h2>
+        <p class="text-center text-gray-500 mb-10">選擇你最需要的資訊類型</p>
 
-              <div class="card" data-game="maze">
-                  <div class="card-icon">👹</div>
-                  <div class="card-title">逃出深淵</div>
-                  <div class="card-desc">
-                      在黑暗中甦醒<br>
-                      逃離怪物的追擊！
-                  </div>
-                  <div class="card-hint">點擊進入遊戲</div>
-              </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-              <div class="card" data-game="minesweeper">
-                  <div class="card-icon">💣</div>
-                  <div class="card-title">踩地雷</div>
-                  <div class="card-desc">
-                      經典掃雷益智遊戲<br>
-                      小心！每一步都可能是最後一步！
-                  </div>
-                  <div class="card-hint">點擊進入遊戲</div>
-              </div>
-          </div>
+          <!-- Card 1: 升學管道 -->
+          <article id="admission" class="hc-card card-block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden"
+            aria-labelledby="card-admission-title">
+            <div class="h-2 bg-gradient-to-r from-blue-500 to-teal-500" role="presentation"></div>
+            <div class="p-6">
+              <span class="text-5xl block mb-4" aria-hidden="true">🎓</span>
+              <h3 id="card-admission-title" class="font-black text-xl text-gray-900 mb-2">升學管道專區</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">願景計畫、繁星推薦、特殊選才，找到最適合你的入學方式。</p>
+              <ul class="text-sm text-gray-500 space-y-1 mb-5" role="list">
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>願景計畫（弱勢專招）</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>繁星推薦入學</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>特殊選才招生</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>技職升學路徑</li>
+              </ul>
+              <a href="#" class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors active:scale-95">
+                了解升學管道
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 2: 獎助學金 -->
+          <article id="scholarships" class="hc-card card-block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden"
+            aria-labelledby="card-scholarship-title">
+            <div class="h-2 bg-gradient-to-r from-yellow-400 to-orange-500" role="presentation"></div>
+            <div class="p-6">
+              <span class="text-5xl block mb-4" aria-hidden="true">💰</span>
+              <h3 id="card-scholarship-title" class="font-black text-xl text-gray-900 mb-2">獎助學金與學費減免</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">政府與民間獎助學金、學雜費減免、就學貸款申請一次搞定。</p>
+              <ul class="text-sm text-gray-500 space-y-1 mb-5" role="list">
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>教育部弱勢助學金</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>學雜費減免申請</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>就學貸款說明</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>民間獎學金資料庫</li>
+              </ul>
+              <a href="#" class="block text-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-colors active:scale-95">
+                查詢補助方案
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 3: 學習資源 -->
+          <article id="resources" class="hc-card card-block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden"
+            aria-labelledby="card-resource-title">
+            <div class="h-2 bg-gradient-to-r from-green-500 to-teal-500" role="presentation"></div>
+            <div class="p-6">
+              <span class="text-5xl block mb-4" aria-hidden="true">📖</span>
+              <h3 id="card-resource-title" class="font-black text-xl text-gray-900 mb-2">免費學習資源</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">免費補救教學、線上課程、師資陪伴，讓學習不受地域限制。</p>
+              <ul class="text-sm text-gray-500 space-y-1 mb-5" role="list">
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>補救教學資源中心</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>均一教育平台</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>教育部數位學苑</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>免費課輔媒合平台</li>
+              </ul>
+              <a href="#" class="block text-center bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl transition-colors active:scale-95">
+                探索學習資源
+              </a>
+            </div>
+          </article>
+
+          <!-- Card 4: 諮詢 FAQ -->
+          <article id="consult" class="hc-card card-block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all overflow-hidden"
+            aria-labelledby="card-consult-title">
+            <div class="h-2 bg-gradient-to-r from-purple-500 to-pink-500" role="presentation"></div>
+            <div class="p-6">
+              <span class="text-5xl block mb-4" aria-hidden="true">🙋</span>
+              <h3 id="card-consult-title" class="font-black text-xl text-gray-900 mb-2">諮詢與 FAQ</h3>
+              <p class="text-gray-600 text-sm mb-4 leading-relaxed">1 對 1 線上諮詢，由受訓志工陪你整理申請流程。</p>
+              <ul class="text-sm text-gray-500 space-y-1 mb-5" role="list">
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>預約 1 對 1 諮詢</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>常見問題 FAQ</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>申請文件範本下載</li>
+                <li class="flex items-center gap-2"><span aria-hidden="true">›</span>社福資源轉介</li>
+              </ul>
+              <a href="#" class="block text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-colors active:scale-95">
+                預約諮詢
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ANNOUNCEMENT STRIP ===== -->
+    <section class="bg-teal-700 text-white py-8 px-4" aria-label="最新消息">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-black text-lg mb-4 flex items-center gap-2"><span aria-hidden="true">📣</span>最新消息</h2>
+        <ul class="space-y-3 text-sm" role="list">
+          <li class="flex gap-3">
+            <time class="shrink-0 font-mono bg-teal-800 px-2 py-1 rounded text-teal-200 text-xs">2025/06</time>
+            <span>114 學年度願景計畫報名已開始，低收入戶學生可加計 25 分</span>
+          </li>
+          <li class="flex gap-3">
+            <time class="shrink-0 font-mono bg-teal-800 px-2 py-1 rounded text-teal-200 text-xs">2025/05</time>
+            <span>教育部高中弱勢助學金申請截止日：6月30日</span>
+          </li>
+          <li class="flex gap-3">
+            <time class="shrink-0 font-mono bg-teal-800 px-2 py-1 rounded text-teal-200 text-xs">2025/04</time>
+            <span>新增 40 所大學「特殊選才」備審資料範本供下載</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="hc-footer bg-gray-900 text-gray-300 pt-12 pb-6 px-4" role="contentinfo">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+
+        <!-- Emergency contacts -->
+        <div>
+          <h3 class="text-white font-black text-lg mb-4 flex items-center gap-2">
+            <span aria-hidden="true">🆘</span> 緊急求助管道
+          </h3>
+          <ul class="space-y-3 text-sm" role="list">
+            <li>
+              <a href="tel:1925" class="flex items-center gap-2 text-orange-400 hover:text-orange-300 font-bold text-lg">
+                <span aria-hidden="true">📞</span> 1925 安心專線
+              </a>
+              <p class="text-gray-500 text-xs ml-7">24 小時心理諮詢（免費）</p>
+            </li>
+            <li>
+              <a href="tel:1957" class="flex items-center gap-2 text-orange-400 hover:text-orange-300 font-bold text-lg">
+                <span aria-hidden="true">📞</span> 1957 福利諮詢
+              </a>
+              <p class="text-gray-500 text-xs ml-7">社會福利資源諮詢</p>
+            </li>
+            <li>
+              <a href="tel:0800-2885-995" class="flex items-center gap-2 text-orange-400 hover:text-orange-300 font-bold">
+                <span aria-hidden="true">📞</span> 0800-2885-995
+              </a>
+              <p class="text-gray-500 text-xs ml-7">教育部學生輔導諮商</p>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Official links -->
+        <div>
+          <h3 class="text-white font-black text-lg mb-4">🔗 相關官方網站</h3>
+          <ul class="space-y-2 text-sm" role="list">
+            <li><a href="https://www.edu.tw" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">教育部全球資訊網</a></li>
+            <li><a href="https://www.ceec.edu.tw" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">大學入學考試中心</a></li>
+            <li><a href="https://www.caac.ccu.edu.tw" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">大學繁星推薦入學委員會</a></li>
+            <li><a href="https://special.unews.com.tw" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">特殊選才資訊平台</a></li>
+            <li><a href="https://studentgrant.moe.gov.tw" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">教育部學生學習扶助資源</a></li>
+            <li><a href="https://www.junyiacademy.org" target="_blank" rel="noopener noreferrer"
+              class="text-teal-400 hover:text-teal-300 underline">均一教育平台（免費）</a></li>
+          </ul>
+        </div>
+
+        <!-- About & disclaimer -->
+        <div>
+          <h3 class="text-white font-black text-lg mb-4">ℹ️ 關於本平台</h3>
+          <p class="text-sm text-gray-400 leading-relaxed mb-3">
+            本平台由公民志工社群維護，旨在整合分散的公共資訊，降低弱勢學生的資訊落差，不代表任何政府機關立場。
+          </p>
+          <p class="text-xs text-gray-500 leading-relaxed">
+            <strong class="text-gray-400">免責聲明：</strong>本站資訊以官方公告為準，申請資格與截止日期請以各主辦單位公告為主。本站不蒐集使用者個人資料。
+          </p>
+        </div>
       </div>
 
-      <!-- 遊戲區域 -->
-      <div id="gameArea">
-          <iframe id="gameFrame"></iframe>
+      <div class="border-t border-gray-700 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-500">
+        <p>© 2025 升學補助通 · 以 CC BY-NC 4.0 授權分享</p>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-gray-300">隱私政策</a>
+          <a href="#" class="hover:text-gray-300">無障礙聲明</a>
+          <a href="#" class="hover:text-gray-300">聯絡我們</a>
+        </div>
       </div>
+    </div>
+  </footer>
 
-      <button id="backBtn">返回大廳</button>
-      <div class="loading" id="loading">載入中...</div>
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    /* ——— Font Scale ——— */
+    let fontScale = parseFloat(localStorage.getItem('fontScale') || '1');
+    applyFontScale();
 
-      <script>
-          const menu = document.getElementById('menu');
-          const gameArea = document.getElementById('gameArea');
-          const gameFrame = document.getElementById('gameFrame');
-          const backBtn = document.getElementById('backBtn');
-          const loading = document.getElementById('loading');
-          const cards = document.querySelectorAll('.card');
+    function adjustFont(delta) {
+      if (delta === 0) {
+        fontScale = 1;
+      } else {
+        fontScale = Math.min(1.5, Math.max(0.8, fontScale + delta));
+      }
+      applyFontScale();
+      localStorage.setItem('fontScale', fontScale);
+    }
 
-          const gameFiles = {
-              '2048': '2048.html',
-              'snake': 'snake.html',
-              'maze': 'maze.html',
-              'minesweeper': 'minesweeper.html'
-          };
+    function applyFontScale() {
+      document.documentElement.style.setProperty('--font-scale', fontScale);
+      document.getElementById('btn-font-reset').setAttribute(
+        'aria-label', `重置字體 (目前 ${Math.round(fontScale * 100)}%)`
+      );
+    }
 
-          function openGame(gameName) {
-              // 顯示載入中
-              loading.style.display = 'block';
+    /* ——— Eye-Care Mode ——— */
+    let eyeCareOn = localStorage.getItem('eyeCare') === 'true';
+    applyEyeCare();
 
-              // 隱藏選單，顯示遊戲區域
-              menu.style.display = 'none';
-              gameArea.style.display = 'block';
-              backBtn.style.display = 'block';
+    function toggleEyeCare() {
+      // Eye-care and high-contrast are mutually exclusive
+      if (document.documentElement.classList.contains('high-contrast')) {
+        toggleHighContrast();
+      }
+      eyeCareOn = !eyeCareOn;
+      localStorage.setItem('eyeCare', eyeCareOn);
+      applyEyeCare();
+    }
 
-              // 載入遊戲
-              gameFrame.src = gameFiles[gameName];
+    function applyEyeCare() {
+      const btn = document.getElementById('btn-eyecare');
+      document.documentElement.classList.toggle('eye-care', eyeCareOn);
+      btn.setAttribute('aria-pressed', eyeCareOn);
+      btn.title = eyeCareOn ? '關閉護眼模式' : '護眼模式';
+    }
 
-              // iframe 載入完成後隱藏載入動畫
-              gameFrame.onload = function() {
-                  loading.style.display = 'none';
-              };
-          }
+    /* ——— High-Contrast Mode ——— */
+    let hcOn = localStorage.getItem('highContrast') === 'true';
+    applyHighContrast();
 
-          function closeGame() {
-              // 顯示選單，隱藏遊戲區域
-              menu.style.display = 'flex';
-              gameArea.style.display = 'none';
-              backBtn.style.display = 'none';
+    function toggleHighContrast() {
+      if (document.documentElement.classList.contains('eye-care')) {
+        eyeCareOn = false;
+        localStorage.setItem('eyeCare', false);
+        applyEyeCare();
+      }
+      hcOn = !hcOn;
+      localStorage.setItem('highContrast', hcOn);
+      applyHighContrast();
+    }
 
-              // 清除 iframe
-              gameFrame.src = '';
-          }
+    function applyHighContrast() {
+      const btn = document.getElementById('btn-hc');
+      document.documentElement.classList.toggle('high-contrast', hcOn);
+      btn.setAttribute('aria-pressed', hcOn);
+      btn.title = hcOn ? '關閉高對比模式' : '高對比模式';
+    }
 
-          // 卡片點擊事件
-          cards.forEach(card => {
-              card.addEventListener('click', () => {
-                  const gameName = card.dataset.game;
-                  openGame(gameName);
-              });
-          });
+    /* ——— Mobile Menu ——— */
+    function toggleMenu() {
+      const nav = document.getElementById('main-nav');
+      const btn = document.getElementById('btn-menu');
+      const isOpen = !nav.classList.contains('hidden');
+      nav.classList.toggle('hidden', isOpen);
+      btn.setAttribute('aria-expanded', !isOpen);
+    }
 
-          // 返回按鈕
-          backBtn.addEventListener('click', closeGame);
+    /* ——— Quick Wizard ——— */
+    const wizardData = {
+      '國中生': {
+        title: '🏫 國中生可申請的補助',
+        items: [
+          '低收入戶子女就讀公私立國中免繳學費',
+          '學生午餐補助（依家庭收入）',
+          '教育部攜手計畫課後補救教學',
+          '地方政府學用品補助',
+        ],
+        cta: '查看國中生完整補助清單',
+        color: 'border-blue-400 bg-blue-50',
+      },
+      '高中職生': {
+        title: '📚 高中職生可申請的補助',
+        items: [
+          '教育部弱勢助學計畫（每年最高 3 萬）',
+          '公立高中職學費全免（已實施）',
+          '私立高中職學費補助方案',
+          '繁星推薦 / 願景計畫升大學加分',
+        ],
+        cta: '查看高中職生完整補助清單',
+        color: 'border-orange-400 bg-orange-50',
+      },
+      '大專生': {
+        title: '🎓 大專生可申請的補助',
+        items: [
+          '弱勢學生助學計畫（每月 5,000 元）',
+          '就學貸款（免利息，畢業後還）',
+          '學雜費減免（低收 50%~100%）',
+          '各校特殊選才及願景計畫入學',
+        ],
+        cta: '查看大專生完整補助清單',
+        color: 'border-teal-400 bg-teal-50',
+      },
+    };
 
-          // ESC 鍵返回
-          document.addEventListener('keydown', e => {
-              if (e.key === 'Escape' && gameArea.style.display === 'block') {
-                  closeGame();
-              }
-          });
-      </script>
-  </body>
-  </html>
+    function selectWizard(btn, type) {
+      document.querySelectorAll('.wizard-btn').forEach(b => {
+        b.classList.remove('border-orange-400', 'bg-orange-50', 'ring-2', 'ring-orange-400');
+      });
+      btn.classList.add('border-orange-400', 'bg-orange-50', 'ring-2', 'ring-orange-400');
+
+      const d = wizardData[type];
+      const result = document.getElementById('wizard-result');
+      result.className = `mt-6 p-5 rounded-2xl border-2 ${d.color} text-gray-800`;
+      result.innerHTML = `
+        <h3 class="font-black text-lg mb-3">${d.title}</h3>
+        <ul class="space-y-2 mb-5" role="list">
+          ${d.items.map(i => `<li class="flex items-start gap-2"><span aria-hidden="true" class="text-green-600 font-bold mt-0.5">✓</span><span>${i}</span></li>`).join('')}
+        </ul>
+        <a href="#scholarships" class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl active:scale-95 transition-all">
+          ${d.cta} →
+        </a>
+      `;
+      result.classList.remove('hidden');
+      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ——— Restore preferences on load ——— */
+    document.addEventListener('DOMContentLoaded', () => {
+      if (hcOn) applyHighContrast();
+      if (eyeCareOn) applyEyeCare();
+      applyFontScale();
+    });
+  </script>
+
+</body>
+</html>
